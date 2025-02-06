@@ -1,0 +1,135 @@
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+function LoginCard() {
+  // State for form inputs
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [agreeToRules, setAgreeToRules] = useState(false);
+
+  // Handle form submission
+  const handleLogin = () => {
+    if (!username || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+    if (!agreeToRules) {
+      alert("You must agree to the website rules.");
+      return;
+    }
+    alert(`Login successful! Welcome, ${username}.`);
+    navigate("/home");
+  };
+
+  const handleRegister = () => {
+    alert("Redirecting to registration page...");
+    navigate("/register");
+  };
+
+  return (
+    <Card sx={{ maxWidth: 400, margin: "auto", mt: 5, boxShadow: 3 }}>
+      <CardContent>
+        <Typography
+          variant="h6"
+          noWrap
+          align="center"
+          sx={{
+            flexGrow: 1,
+            fontFamily: '"Housttely Signature", cursive',
+            fontSize: "1rem",
+          }}
+        >
+          Login
+        </Typography>
+        <Box component="form" noValidate autoComplete="off">
+          {/* Username Field */}
+          <TextField
+            fullWidth
+            label="Username"
+            variant="outlined"
+            margin="normal"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          {/* Password Field */}
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            variant="outlined"
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {/* Agree to Rules Checkbox */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={agreeToRules}
+                onChange={(e) => setAgreeToRules(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="I agree to the website rules"
+          />
+          {/* Buttons */}
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleLogin}
+              >
+                <Typography
+                  variant="h6"
+                  noWrap
+                  sx={{
+                    flexGrow: 1,
+                    fontFamily: '"Housttely Signature", cursive',
+                    fontSize: "1rem",
+                  }}
+                >
+                  Login
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="primary"
+                onClick={handleRegister}
+              >
+                <Typography
+                  variant="h6"
+                  noWrap
+                  sx={{
+                    flexGrow: 1,
+                    fontFamily: '"Housttely Signature", cursive',
+                    fontSize: "1rem",
+                  }}
+                >
+                  Register
+                </Typography>
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default LoginCard;
