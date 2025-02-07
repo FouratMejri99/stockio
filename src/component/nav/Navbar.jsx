@@ -1,11 +1,11 @@
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
 import InventoryRoundedIcon from "@mui/icons-material/InventoryRounded";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import MuiAppBar from "@mui/material/AppBar";
+import Badge from "@mui/material/Badge"; // Import Badge component
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -14,11 +14,15 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { styled, useTheme } from "@mui/material/styles";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "../../context/notification";
+import ThemeToggleButton from "../Themetogglebutton";
 
 const drawerWidth = 240;
 
@@ -82,9 +86,11 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function MiniDrawer() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+
+  const { notifications, anchorEl, handleClick, handleClose, addNotification } =
+    useNotificationContext();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -96,12 +102,12 @@ export default function MiniDrawer() {
 
   const onLogout = () => {
     navigate("/login");
+    addNotification("You Logged out See You Soon !");
   };
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      {/* AppBar (Top Navbar) */}
       <AppBar position="fixed" open={open} sx={{ backgroundColor: "#213f7e " }}>
         <Toolbar>
           <IconButton
@@ -124,12 +130,29 @@ export default function MiniDrawer() {
           >
             Welcome to Stock Prices Project
           </Typography>
-          <IconButton color="inherit">
-            <NotificationsIcon />
+
+          {/* Notification Icon with Badge */}
+          <IconButton color="inherit" onClick={handleClick}>
+            <Badge badgeContent={notifications.length} color="error">
+              <NotificationsIcon />
+            </Badge>
           </IconButton>
-          <IconButton color="inherit">
-            <Brightness4Icon />
-          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            {notifications.length > 0 ? (
+              notifications.map((notification, index) => (
+                <MenuItem key={index}>{notification}</MenuItem>
+              ))
+            ) : (
+              <MenuItem>No new notifications</MenuItem>
+            )}
+          </Menu>
+
+          <ThemeToggleButton />
+
           <IconButton color="inherit">
             <AccountCircleIcon />
           </IconButton>
@@ -160,8 +183,8 @@ export default function MiniDrawer() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            height: "100%", // Ensures the drawer takes up the full height
-            justifyContent: "space-between", // Spreads the items apart
+            height: "100%",
+            justifyContent: "space-between",
           }}
         >
           <List>
@@ -170,7 +193,6 @@ export default function MiniDrawer() {
                 <ListItemIcon>
                   <InventoryRoundedIcon sx={{ color: "black" }} />
                 </ListItemIcon>
-
                 <Typography
                   variant="h2"
                   noWrap

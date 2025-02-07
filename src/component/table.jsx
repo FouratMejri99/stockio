@@ -10,6 +10,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
+import { useNotificationContext } from "../context/notification";
 
 export default function BasicTable() {
   const [rows, setRows] = useState([]);
@@ -17,7 +18,7 @@ export default function BasicTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
-
+  const { addNotification } = useNotificationContext();
   const symbols = ["AAPL", "GOOGL", "MSFT", "AMZN"];
   const API_KEY = "7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl"; // Keep this secure!
   const date = "2025-02-05"; // Static for now, make it dynamic if needed
@@ -81,7 +82,7 @@ export default function BasicTable() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Stock added successfully!");
+        addNotification("Stock Added !");
       } else {
         alert(`Error: ${data.message}`);
       }
@@ -121,7 +122,7 @@ export default function BasicTable() {
         onChange={handleSearchChange}
         style={{ marginBottom: 20 }}
       />
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={10}>
         <Table sx={{ minWidth: 650 }} aria-label="stock data table">
           <TableHead>
             <TableRow>

@@ -10,11 +10,13 @@ const Stocklist = () => {
         alignItems: "center", // Centers vertically
         height: "100vh", // Full viewport height
         flexDirection: "column",
+        marginLeft: "18px",
+        width: "500px",
       }}
     >
       <Container
         maxWidth="lg"
-        sx={{ marginLeft: "10px", width: "1500px", height: "500px" }}
+        sx={{ marginLeft: "30px", width: "1500px", height: "500px" }}
       >
         <BasicTable />
       </Container>

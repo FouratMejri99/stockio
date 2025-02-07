@@ -1,18 +1,14 @@
 import { Card, CardContent, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
-import {
-  PageContainer,
-  PageHeader,
-  PageHeaderToolbar,
-} from "@toolpad/core/PageContainer";
+import { PageHeader, PageHeaderToolbar } from "@toolpad/core/PageContainer";
 import * as React from "react";
 import BasicDateCalendar from "../../component/watchlist/calendar";
 import GridDemo from "../../component/watchlist/chart";
-import BasicPie from "../../component/watchlist/piechart";
+import StockList from "../../component/watchlist/list";
+import PieChartWithCustomizedLabel from "../../component/watchlist/piechart";
 
 function useDemoRouter(initialPath) {
   const [pathname, setPathname] = React.useState(initialPath);
@@ -30,9 +26,7 @@ function useDemoRouter(initialPath) {
 
 function CustomPageToolbar() {
   return (
-    <PageHeaderToolbar>
-      <Stack direction="row" spacing={1} alignItems="center"></Stack>
-    </PageHeaderToolbar>
+    <PageHeaderToolbar>{/* Custom toolbar if needed */}</PageHeaderToolbar>
   );
 }
 
@@ -42,7 +36,6 @@ function CustomPageHeader() {
 
 export default function WatchlistPage(props) {
   const { window } = props;
-
   const theme = useTheme();
   const demoWindow = window ? window() : undefined;
 
@@ -54,67 +47,85 @@ export default function WatchlistPage(props) {
         title: "ACME Inc.",
       }}
     >
-      <Paper sx={{ p: 2, width: "100%" }}>
-        <PageContainer slots={{ header: CustomPageHeader }}>
-          <Grid container spacing={2}>
-            {/* Row 1: Calendar & List */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ minHeight: 300 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Calendar
-                  </Typography>
-                  <BasicDateCalendar />
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Card sx={{ minHeight: 300 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    List
-                  </Typography>
-                  <div
-                    style={{
-                      height: 250,
-                      backgroundColor: "#f0f0f0",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    List Content Here
-                  </div>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Row 2: Chart & Pie Chart */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ minHeight: 300 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Chart
-                  </Typography>
-                  <GridDemo />
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <Card sx={{ minHeight: 300 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Pie Chart
-                  </Typography>
-                  <BasicPie />
-                </CardContent>
-              </Card>
-            </Grid>
+      <Box sx={{ flexGrow: 1, padding: 9, marginRight: 17 }}>
+        <Grid container spacing={4}>
+          {/* Stock List */}
+          <Grid item xs={12} sm={8} md={8}>
+            <Card elevation={3} sx={{ height: "100%" }}>
+              <CardContent>
+                <StockList />
+              </CardContent>
+            </Card>
           </Grid>
-        </PageContainer>
-      </Paper>
+
+          {/* Date Calendar */}
+          <Grid item xs={12} sm={4} md={4}>
+            <BasicDateCalendar
+              sx={{
+                height: "100%",
+              }}
+            />
+          </Grid>
+
+          {/* Stock Chart */}
+          <Grid item xs={12} sm={8} md={8}>
+            <Card elevation={10} sx={{ height: "100%" }}>
+              <CardContent>
+                <Typography
+                  variant="h2"
+                  noWrap
+                  sx={{
+                    flexGrow: 1,
+                    display: "flex", // Use flexbox for centering
+                    justifyContent: "center", // Center horizontally
+                    alignItems: "center", // Center vertically
+                    fontFamily: '"Housttely Signature", cursive',
+                    fontSize: "1rem",
+                  }}
+                >
+                  Stocks History Chart
+                </Typography>
+                <GridDemo sx={{ width: "100%", height: "400px" }} />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Pie Chart */}
+          <Grid item xs={12} sm={4} md={4}>
+            <Card elevation={3} sx={{ height: "100%" }}>
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column", // Stack elements vertically
+                  alignItems: "center", // Center content horizontally
+                  justifyContent: "center", // Center content vertically
+                  textAlign: "center", // Center text horizontally
+                }}
+              >
+                <Typography
+                  variant="h2"
+                  noWrap
+                  sx={{
+                    fontFamily: '"Housttely Signature", cursive',
+                    fontSize: "1rem",
+                    marginBottom: 2, // Add some space between the title and pie chart
+                  }}
+                >
+                  Prices Pie
+                </Typography>
+                <PieChartWithCustomizedLabel
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center", // Center pie chart horizontally
+                    alignItems: "center", // Ensure it's centered vertically if required
+                    flexGrow: 1,
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
     </AppProvider>
   );
 }

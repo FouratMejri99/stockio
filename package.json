@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^3.7.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.2",
@@ -21,7 +22,7 @@
     "dayjs": "^1.11.13",
     "expres": "^0.0.5",
     "express": "^4.21.2",
-    "framer-motion": "^12.4.0",
+    "framer-motion": "^12.4.1",
     "jsconfig.json": "^2.3.3",
     "list": "^2.0.19",
     "lucide-react": "^0.474.0",
@@ -43,7 +44,7 @@
     "yahoo-finance2": "^2.13.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"react-scripts start\" \"node connect.js\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -65,5 +66,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

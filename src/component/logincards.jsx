@@ -12,6 +12,7 @@ import {
 import axios from "axios"; // Add axios import for making API requests
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "../context/notification";
 
 function LoginCard() {
   // State for form inputs
@@ -19,6 +20,7 @@ function LoginCard() {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
+  const { addNotification } = useNotificationContext();
 
   // Handle form submission
   const handleLogin = async () => {
@@ -41,7 +43,9 @@ function LoginCard() {
         // Save token in localStorage
         localStorage.setItem("token", response.data.token);
         alert(response.data.message);
-        navigate("/home");
+
+        navigate("/stocklist");
+        addNotification("Account logged in!");
       } else {
         alert("Login failed. No token received.");
       }

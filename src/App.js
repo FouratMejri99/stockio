@@ -5,12 +5,14 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import MiniDrawer from "./component/nav/Navbar";
-import HomePage from "./pages/HomePage";
-import Login from "./pages/login";
-import Register from "./pages/RegisterPage";
-import Stocklist from "./pages/StockDetailPage";
-import WatchlistPage from "./pages/watchlist/WatchlistPage";
+import MiniDrawer from "../src/component/nav/Navbar";
+import { NotificationProvider } from "../src/context/notification";
+import { ThemeProviderWrapper } from "../src/context/ThemeContext"; // Import theme provider
+import HomePage from "../src/pages/HomePage";
+import Login from "../src/pages/login";
+import Register from "../src/pages/RegisterPage";
+import Stocklist from "../src/pages/StockDetailPage";
+import WatchlistPage from "../src/pages/watchlist/WatchlistPage";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -19,21 +21,18 @@ const Layout = ({ children }) => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* Keep Drawer fixed so it doesn't push content */}
       {showDrawer && (
         <Box sx={{ width: "260px", flexShrink: 0, position: "fixed" }}>
           <MiniDrawer />
         </Box>
       )}
-
-      {/* Content Area, ensures no shifting */}
       <Box
         sx={{
           flexGrow: 1,
           padding: 3,
-          marginLeft: showDrawer ? "260px" : "0px", // Keeps layout stable
+          marginLeft: showDrawer ? "260px" : "0px",
           transition: "margin 0.3s ease-in-out",
-          width: "100%", // Prevents content from resizing
+          width: "100%",
         }}
       >
         {children}
@@ -44,27 +43,29 @@ const Layout = ({ children }) => {
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* Routes wrapped with MiniDrawer */}
-        <Route
-          path="/*"
-          element={
-            <Layout>
-              <Routes>
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/watchlist" element={<WatchlistPage />} />
-                <Route path="/stocklist" element={<Stocklist />} />
-              </Routes>
-            </Layout>
-          }
-        />
-      </Routes>
-    </Router>
+    <ThemeProviderWrapper>
+      <NotificationProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/*"
+              element={
+                <Layout>
+                  <Routes>
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/watchlist" element={<WatchlistPage />} />
+                    <Route path="/stocklist" element={<Stocklist />} />
+                  </Routes>
+                </Layout>
+              }
+            />
+          </Routes>
+        </Router>
+      </NotificationProvider>
+    </ThemeProviderWrapper>
   );
 };
 

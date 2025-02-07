@@ -49,6 +49,20 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
+app.get("/get-user-stocks", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ stocks: user.stocks });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Register Route
 app.post("/register", async (req, res) => {
   const { email, username, password, confirmPassword } = req.body;
