@@ -6,15 +6,26 @@ const Register = () => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "flex-end", // Align to the right
+        justifyContent: "center", // Center horizontally
         alignItems: "center", // Center vertically
         minHeight: "100vh", // Full viewport height
-        paddingRight: "4%", // Add some right padding for better spacing
+        position: "relative", // Ensure proper positioning
       }}
     >
-      {/* Wrapping OrbitingCirclesDemo in a Box with fixed dimensions */}
+      {/* Orbiting Circles Positioned Separately */}
+      <Box
+        sx={{
+          position: "absolute",
+          left: "10%", // Adjust position to the left
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: 200,
+          height: 200,
+        }}
+      ></Box>
 
-      <Grid container justifyContent="flex-end">
+      {/* Login Card Centered */}
+      <Grid container justifyContent="center">
         <Grid item>
           <RegisterCard />
         </Grid>

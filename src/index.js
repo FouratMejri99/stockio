@@ -1,6 +1,5 @@
-import React from "react";
 import { createRoot } from "react-dom/client"; // Import createRoot
-import App from "./App";
+import App from "./App.js";
 import "./styles/global.css";
 
 // Get the root element

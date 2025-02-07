@@ -9,19 +9,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 function RegisterCard() {
-  // State for form inputs
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
+  const navigate = useNavigate();
 
-  // Handle registration
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!email || !username || !password || !confirmPassword) {
       alert("Please fill in all fields.");
       return;
@@ -34,12 +34,26 @@ function RegisterCard() {
       alert("You must agree to the website rules.");
       return;
     }
-    alert(`Registration successful! Welcome, ${username}.`);
+
+    try {
+      const response = await axios.post("http://localhost:5000/register", {
+        email,
+        username,
+        password,
+        confirmPassword,
+      });
+      alert(response.data.message);
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred during registration.");
+    }
   };
 
   const onBackToLogin = () => {
     navigate("/login");
   };
+
   return (
     <Card sx={{ maxWidth: 400, margin: "auto", mt: 5, boxShadow: 3 }}>
       <CardContent>
@@ -47,7 +61,6 @@ function RegisterCard() {
           Register
         </Typography>
         <Box component="form" noValidate autoComplete="off">
-          {/* Email Field */}
           <TextField
             fullWidth
             label="Email"
@@ -56,7 +69,6 @@ function RegisterCard() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          {/* Username Field */}
           <TextField
             fullWidth
             label="Username"
@@ -65,7 +77,6 @@ function RegisterCard() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          {/* Password Field */}
           <TextField
             fullWidth
             label="Password"
@@ -75,7 +86,6 @@ function RegisterCard() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {/* Confirm Password Field */}
           <TextField
             fullWidth
             label="Confirm Password"
@@ -85,7 +95,6 @@ function RegisterCard() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          {/* Agree to Rules Checkbox */}
           <FormControlLabel
             control={
               <Checkbox
@@ -96,7 +105,6 @@ function RegisterCard() {
             }
             label="I agree to the website rules"
           />
-          {/* Buttons */}
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={6}>
               <Button
@@ -109,12 +117,7 @@ function RegisterCard() {
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                onClick={onBackToLogin}
-              >
+              <Button fullWidth variant="outlined" onClick={onBackToLogin}>
                 Back to Login
               </Button>
             </Grid>

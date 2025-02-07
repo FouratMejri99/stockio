@@ -19,7 +19,7 @@ export default function OrbitingCircles({
         >
           <circle
             className="stroke-black/10 stroke-1 dark:stroke-white/10"
-            cx="20%"
+            cx="50%"
             cy="50%"
             r={radius}
             fill="none"

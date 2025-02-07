@@ -13,42 +13,86 @@ import { useEffect, useState } from "react";
 
 export default function BasicTable() {
   const [rows, setRows] = useState([]);
+  const [allRows, setAllRows] = useState([]); // Store all data for search filtering
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
 
-  // Fetch data from the API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2023-01-09/2023-02-10?adjusted=true&sort=asc&apiKey=7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl"
-        );
-        const data = await response.json();
+  const symbols = ["AAPL", "GOOGL", "MSFT", "AMZN"];
+  const API_KEY = "7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl"; // Keep this secure!
+  const date = "2025-02-05"; // Static for now, make it dynamic if needed
 
-        // Process and format the response into rows
-        const formattedRows = data.results.map((item) => ({
-          name: "AAPL", // Assuming AAPL is the ticker symbol
-          calories: item.c, // Close price
-          fat: item.o, // Open price
-          carbs: item.h, // High price
-          protein: item.l, // Low price
-        }));
+  // Fetch stock data from Polygon.io
+  useEffect(() => {
+    const fetchStockData = async () => {
+      try {
+        const responses = await Promise.allSettled(
+          symbols.map(async (symbol) => {
+            const url = `https://api.polygon.io/v1/open-close/${symbol}/${date}?adjusted=true&apiKey=${API_KEY}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Error fetching ${symbol}`);
+            return res.json();
+          })
+        );
+
+        const formattedRows = responses
+          .filter(
+            (res) => res.status === "fulfilled" && res.value?.status === "OK"
+          )
+          .map((res, index) => ({
+            name: symbols[index], // Correct key name
+            currentPrice: res.value.close || "N/A",
+            openPrice: res.value.open || "N/A",
+            highPrice: res.value.high || "N/A",
+            lowPrice: res.value.low || "N/A",
+          }));
 
         setRows(formattedRows);
+        setAllRows(formattedRows);
       } catch (error) {
-        console.error("Error fetching data: ", error);
+        console.error("Error fetching stock data:", error);
       }
     };
 
-    fetchData();
+    fetchStockData();
   }, []);
 
+  const handleAddStock = async (stock) => {
+    const userEmail = "test@example.com"; // Replace with logged-in user's email
+
+    try {
+      const response = await fetch("http://localhost:5000/add-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          stockData: stock,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Stock added successfully!");
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error adding stock:", error);
+      alert("Failed to add stock.");
+    }
+  };
+
   const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-    const filteredRows = rows.filter((row) =>
-      row.name.toLowerCase().includes(event.target.value.toLowerCase())
+    const value = event.target.value.toLowerCase();
+    setSearch(value);
+
+    // Filter from allRows to avoid modifying the original state
+    const filteredRows = allRows.filter((row) =>
+      row.name.toLowerCase().includes(value)
     );
+
     setRows(filteredRows);
   };
 
@@ -71,7 +115,7 @@ export default function BasicTable() {
         style={{ marginBottom: 20 }}
       />
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} aria-label="stock data table">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -83,24 +127,23 @@ export default function BasicTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                  <TableCell align="center">
-                    <IconButton color="primary">
-                      <AddIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {rows.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell>{row.name}</TableCell>
+                <TableCell align="right">{row.currentPrice}</TableCell>
+                <TableCell align="right">{row.openPrice}</TableCell>
+                <TableCell align="right">{row.highPrice}</TableCell>
+                <TableCell align="right">{row.lowPrice}</TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleAddStock(row)}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

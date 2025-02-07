@@ -9,18 +9,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios"; // Add axios import for making API requests
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 function LoginCard() {
   // State for form inputs
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
 
   // Handle form submission
-  const handleLogin = () => {
-    if (!username || !password) {
+  const handleLogin = async () => {
+    if (!email || !password) {
       alert("Please fill in all fields.");
       return;
     }
@@ -28,8 +30,18 @@ function LoginCard() {
       alert("You must agree to the website rules.");
       return;
     }
-    alert(`Login successful! Welcome, ${username}.`);
-    navigate("/home");
+
+    try {
+      const response = await axios.post("http://localhost:5000/login", {
+        email,
+        password,
+      });
+      alert(response.data.message);
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   const handleRegister = () => {
@@ -56,11 +68,11 @@ function LoginCard() {
           {/* Username Field */}
           <TextField
             fullWidth
-            label="Username"
+            label="Email"
             variant="outlined"
             margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           {/* Password Field */}
           <TextField
