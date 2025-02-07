@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(express.json());
@@ -25,6 +27,27 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model("User", userSchema);
+
+const authenticateUser = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  console.log("Auth Header:", authHeader); // Debugging line
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Extract token
+  console.log("Extracted Token:", token); // Debugging line
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = decoded; // Attach user data to request
+    next();
+  } catch (error) {
+    console.error("JWT Verification Error:", error.message);
+    return res.status(403).json({ message: "Invalid or expired token" });
+  }
+};
 
 // Register Route
 app.post("/register", async (req, res) => {
@@ -55,25 +78,18 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Add stock to user's stock list
-app.post("/add-stock", async (req, res) => {
-  const { email, stockData } = req.body;
+//add stock
+app.post("/add-stock", authenticateUser, async (req, res) => {
+  const { stockData } = req.body;
 
-  if (!email || !stockData) {
-    return res
-      .status(400)
-      .json({ message: "Email and stock data are required" });
+  if (!stockData) {
+    return res.status(400).json({ message: "Stock data is required" });
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
-    }
-
-    // Ensure stocks array exists before pushing
-    if (!user.stocks) {
-      user.stocks = [];
     }
 
     user.stocks.push(stockData);
@@ -93,26 +109,33 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Username and password are required" });
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
   try {
-    // Find user by username
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    // Login successful
-    res.status(200).json({ message: "Login successful!" });
+    // Generate JWT Token
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+    console.log("Generated Token:", token); // Debugging line
+
+    res.status(200).json({
+      message: "Login successful!",
+      token,
+      user: { email: user.email, username: user.username, stocks: user.stocks },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "An error occurred during login" });

@@ -19,12 +19,21 @@ const Layout = ({ children }) => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {showDrawer && <MiniDrawer />}
+      {/* Keep Drawer fixed so it doesn't push content */}
+      {showDrawer && (
+        <Box sx={{ width: "260px", flexShrink: 0, position: "fixed" }}>
+          <MiniDrawer />
+        </Box>
+      )}
+
+      {/* Content Area, ensures no shifting */}
       <Box
         sx={{
           flexGrow: 1,
           padding: 3,
-          marginLeft: showDrawer ? "260px" : "0px",
+          marginLeft: showDrawer ? "260px" : "0px", // Keeps layout stable
+          transition: "margin 0.3s ease-in-out",
+          width: "100%", // Prevents content from resizing
         }}
       >
         {children}

@@ -36,8 +36,15 @@ function LoginCard() {
         email,
         password,
       });
-      alert(response.data.message);
-      navigate("/home");
+
+      if (response.data.token) {
+        // Save token in localStorage
+        localStorage.setItem("token", response.data.token);
+        alert(response.data.message);
+        navigate("/home");
+      } else {
+        alert("Login failed. No token received.");
+      }
     } catch (error) {
       console.error(error);
       alert("Login failed. Please check your credentials.");

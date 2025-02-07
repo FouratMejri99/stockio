@@ -59,12 +59,19 @@ export default function BasicTable() {
 
   const handleAddStock = async (stock) => {
     const userEmail = "test@example.com"; // Replace with logged-in user's email
+    const token = localStorage.getItem("token")?.trim(); // Ensure it's retrieved correctly
+
+    if (!token) {
+      alert("No token found. Please log in again.");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/add-stock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Properly formatted header
         },
         body: JSON.stringify({
           email: userEmail,
