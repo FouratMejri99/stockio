@@ -55,7 +55,15 @@ function RegisterCard() {
   };
 
   return (
-    <Card sx={{ maxWidth: 400, margin: "auto", mt: 5, boxShadow: 3 }}>
+    <Card
+      sx={{
+        maxWidth: 400,
+        margin: "auto",
+        mt: 5,
+        boxShadow: 3,
+        borderRadius: 5,
+      }}
+    >
       <CardContent>
         <Typography variant="h5" align="center" gutterBottom>
           Register

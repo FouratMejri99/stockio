@@ -1,44 +1,78 @@
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
+import axios from "axios";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 
-const data = [
-  { label: "Group A", value: 400, color: "#0088FE" },
-  { label: "Group B", value: 300, color: "#00C49F" },
-  { label: "Group C", value: 300, color: "#FFBB28" },
-  { label: "Group D", value: 200, color: "#FF8042" },
-];
+const API_KEY = "7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl";
 
 const sizing = {
   margin: { right: 5 },
   width: 600,
-  height: 200,
+  height: 300,
   legend: { hidden: true },
 };
-const TOTAL = data.map((item) => item.value).reduce((a, b) => a + b, 0);
 
-const getArcLabel = (params) => {
-  const percent = params.value / TOTAL;
-  return `${(percent * 100).toFixed(0)}%`;
-};
+export default function Dashboard() {
+  const [selectedRange, setSelectedRange] = useState([
+    dayjs("2023-01-09"),
+    dayjs("2023-02-10"),
+  ]); // Default range
+  const [data, setData] = useState([]);
 
-export default function PieChartWithCustomizedLabel() {
+  useEffect(() => {
+    if (!selectedRange[0] || !selectedRange[1]) return;
+
+    const formattedStartDate = selectedRange[0].format("YYYY-MM-DD");
+    const formattedEndDate = selectedRange[1].format("YYYY-MM-DD");
+    const API_URL = `https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/${formattedStartDate}/${formattedEndDate}?adjusted=true&sort=asc&apiKey=${API_KEY}`;
+
+    axios
+      .get(API_URL)
+      .then((response) => {
+        const results = response.data.results;
+        if (results) {
+          const formattedData = results.map((item, index) => ({
+            label: `Volume ${index + 1}`,
+            value: item.v,
+            color: "#0088FE",
+          }));
+
+          setData(formattedData);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [selectedRange]);
+
+  const TOTAL = data.reduce((sum, item) => sum + item.value, 0);
+
+  const getArcLabel = (params) => {
+    const percent = (params.value / TOTAL) * 100;
+    return `${percent.toFixed(0)}%`;
+  };
+
   return (
-    <PieChart
-      series={[
-        {
-          outerRadius: 80,
-          data,
-          arcLabel: getArcLabel,
-        },
-      ]}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fill: "white",
-          fontSize: 15,
-          display: "flex",
-          justifyContent: "center",
-        },
-      }}
-      {...sizing}
-    />
+    <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+      {/* Date Range Picker */}
+
+      {/* Pie Chart */}
+      <PieChart
+        series={[
+          {
+            outerRadius: 80,
+            data,
+            arcLabel: getArcLabel,
+          },
+        ]}
+        sx={{
+          [`& .${pieArcLabelClasses.root}`]: {
+            fill: "white",
+            fontSize: 15,
+            display: "flex",
+            justifyContent: "center",
+          },
+        }}
+        {...sizing}
+      />
+    </div>
   );
 }

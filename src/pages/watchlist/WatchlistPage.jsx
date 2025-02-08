@@ -4,11 +4,13 @@ import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { PageHeader, PageHeaderToolbar } from "@toolpad/core/PageContainer";
+import dayjs from "dayjs";
 import * as React from "react";
+import { useState } from "react";
 import BasicDateCalendar from "../../component/watchlist/calendar";
 import GridDemo from "../../component/watchlist/chart";
 import StockList from "../../component/watchlist/list";
-import PieChartWithCustomizedLabel from "../../component/watchlist/piechart";
+import Dashboard from "../../component/watchlist/piechart";
 
 function useDemoRouter(initialPath) {
   const [pathname, setPathname] = React.useState(initialPath);
@@ -37,6 +39,11 @@ function CustomPageHeader() {
 export default function WatchlistPage(props) {
   const { window } = props;
   const theme = useTheme();
+  const [selectedRange, setSelectedRange] = useState([
+    dayjs("2023-01-09"),
+    dayjs("2023-02-10"),
+  ]);
+
   const demoWindow = window ? window() : undefined;
 
   return (
@@ -61,6 +68,8 @@ export default function WatchlistPage(props) {
           {/* Date Calendar */}
           <Grid item xs={12} sm={4} md={4}>
             <BasicDateCalendar
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
               sx={{
                 height: "100%",
               }}
@@ -113,7 +122,9 @@ export default function WatchlistPage(props) {
                 >
                   Prices Pie
                 </Typography>
-                <PieChartWithCustomizedLabel
+                <Dashboard
+                  selectedRange={selectedRange}
+                  setSelectedRange={setSelectedRange}
                   sx={{
                     display: "flex",
                     justifyContent: "center", // Center pie chart horizontally

@@ -14,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
     setNotifications((prevNotifications) => {
       // If more than 10 notifications, remove the oldest
       const updatedNotifications = [...prevNotifications, notification];
-      if (updatedNotifications.length > 10) {
+      if (updatedNotifications.length > 3) {
         updatedNotifications.shift(); // Remove the first (oldest) notification
       }
       return updatedNotifications;
