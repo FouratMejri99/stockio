@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios"; // Add axios import for making API requests
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { useNotificationContext } from "../context/notification";
 
@@ -19,10 +20,23 @@ function LoginCard() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
+
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("API URL:", API_URL);
+
+  const express = require("express");
+  const cors = require("cors"); // Import CORS
+  const app = express();
+
+  app.use(
+    cors({
+      origin: "https://stockio-git-main-fouratmejri99s-projects.vercel.app", // Replace with your frontend URL
+      methods: ["GET", "POST"], // Allowed methods
+      credentials: true, // If you need cookies to be sent
+    })
+  );
 
   // Handle form submission
   const handleLogin = async () => {
