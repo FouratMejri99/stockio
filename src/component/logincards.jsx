@@ -21,7 +21,7 @@ function LoginCard() {
   const [password, setPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
   console.log("API URL:", API_URL);
 
   // Handle form submission
