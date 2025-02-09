@@ -21,7 +21,7 @@ function LoginCard() {
   const [password, setPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+  const API_URL = process.env.REACT_APP_API_URL;
   console.log("API URL:", API_URL);
 
   // Handle form submission
@@ -36,10 +36,13 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post("${API_URL}/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://stockio-pearl.vercel.app/api/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.token) {
         // Save token in localStorage
