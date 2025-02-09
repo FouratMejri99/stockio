@@ -32,7 +32,7 @@ function LoginCard() {
 
   app.use(
     cors({
-      origin: "https://stockio-pearl.vercel.app/login", // Replace with your frontend URL
+      origin: "https://stockio-pearl.vercel.app/api/login", // Replace with your frontend URL
       methods: ["GET", "POST"], // Allowed methods
       credentials: true, // If you need cookies to be sent
     })
@@ -51,7 +51,7 @@ function LoginCard() {
 
     try {
       const response = await axios.post(
-        "https://stockio-pearl.vercel.app/api/login",
+        "https://stockio-pearl.vercel.app/login",
         {
           email,
           password,
