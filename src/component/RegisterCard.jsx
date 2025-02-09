@@ -20,7 +20,7 @@ function RegisterCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_API_URL;
   console.log("API URL:", API_URL);
 
   const handleRegister = async () => {

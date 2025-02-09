@@ -26,18 +26,6 @@ function LoginCard() {
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("API URL:", API_URL);
 
-  const express = require("express");
-  const cors = require("cors"); // Import CORS
-  const app = express();
-
-  app.use(
-    cors({
-      origin: "https://stockio-pearl.vercel.app/api/login", // Replace with your frontend URL
-      methods: ["GET", "POST"], // Allowed methods
-      credentials: true, // If you need cookies to be sent
-    })
-  );
-
   // Handle form submission
   const handleLogin = async () => {
     if (!email || !password) {
