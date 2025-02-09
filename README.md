@@ -34,16 +34,16 @@ Deployment: Vercel
 To get started with Stockio, follow these steps:
 
 Clone the Repository:
-
-### git clone https://github.com/your-username/stockio.git
-### cd stockio
-
+```bash
+git clone https://github.com/your-username/stockio.git
+cd stockio
+```
 Install Dependencies:
 
 Ensure you have Node.js and npm installed. Then, run the following command to install the required dependencies:
-
-### npm install
-
+```bash
+npm install
+```
 Set Up MongoDB:
 
 Create a MongoDB database (local or cloud-based).
@@ -54,14 +54,16 @@ Run the Backend Server:
 
 Start the Node.js server by running:
 
-### node connect.js
+```bash
+node connect.js
+```
 
 Start the React Application:
 
 In a separate terminal, start the React development server:
-
-### npm start
-
+```bash
+npm start
+```
 Access the Application:
 
 Open your browser and navigate to http://localhost:3000 to view the application.
@@ -88,6 +90,8 @@ Stockio is deployed on Vercel for seamless performance and scalability. To deplo
 Push your code to a GitHub repository.
 
 Connect the repository to Vercel.
+
+connect your mongodb cluster to vercel
 
 Configure environment variables (e.g., MongoDB connection string, API keys).
 
