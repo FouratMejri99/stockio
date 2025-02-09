@@ -32,7 +32,7 @@ function LoginCard() {
 
   app.use(
     cors({
-      origin: "https://stockio-git-main-fouratmejri99s-projects.vercel.app", // Replace with your frontend URL
+      origin: "https://stockio-pearl.vercel.app/login", // Replace with your frontend URL
       methods: ["GET", "POST"], // Allowed methods
       credentials: true, // If you need cookies to be sent
     })
