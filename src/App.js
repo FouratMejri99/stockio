@@ -8,7 +8,6 @@ import {
 import MiniDrawer from "../src/component/nav/Navbar";
 import { NotificationProvider } from "../src/context/notification";
 import { ThemeProviderWrapper } from "../src/context/ThemeContext"; // Import theme provider
-import HomePage from "../src/pages/HomePage";
 import Login from "../src/pages/login";
 import Register from "../src/pages/RegisterPage";
 import Stocklist from "../src/pages/StockDetailPage";
@@ -55,7 +54,6 @@ const App = () => {
               element={
                 <Layout>
                   <Routes>
-                    <Route path="/home" element={<HomePage />} />
                     <Route path="/watchlist" element={<WatchlistPage />} />
                     <Route path="/stocklist" element={<Stocklist />} />
                   </Routes>
