@@ -20,6 +20,8 @@ function RegisterCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  console.log("API URL:", API_URL);
 
   const handleRegister = async () => {
     if (!email || !username || !password || !confirmPassword) {
@@ -36,7 +38,7 @@ function RegisterCard() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/register", {
+      const response = await axios.post("${API_URL}/register", {
         email,
         username,
         password,
