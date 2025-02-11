@@ -13,6 +13,7 @@ import axios from "axios"; // Add axios import for making API requests
 import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
+import CoolMode from "../component/magicui/coolmode";
 import { useNotificationContext } from "../context/notification";
 
 function LoginCard() {
@@ -23,7 +24,7 @@ function LoginCard() {
 
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.VERCEL_URL;
   console.log("API URL:", API_URL);
 
   // Handle form submission
@@ -38,18 +39,14 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post(
-        "https://stockio-pearl.vercel.app/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(API_URL, {
+        email,
+        password,
+      });
 
       if (response.data.token) {
         // Save token in localStorage
         localStorage.setItem("token", response.data.token);
-        alert(response.data.message);
 
         navigate("/stocklist");
         addNotification("Account logged in!");
@@ -63,7 +60,6 @@ function LoginCard() {
   };
 
   const handleRegister = () => {
-    alert("Redirecting to registration page...");
     navigate("/register");
   };
 
@@ -124,24 +120,26 @@ function LoginCard() {
           {/* Buttons */}
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleLogin}
-              >
-                <Typography
-                  variant="h6"
-                  noWrap
-                  sx={{
-                    flexGrow: 1,
-                    fontFamily: '"Housttely Signature", cursive',
-                    fontSize: "1rem",
-                  }}
+              <CoolMode>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={handleLogin}
                 >
-                  Login
-                </Typography>
-              </Button>
+                  <Typography
+                    variant="h6"
+                    noWrap
+                    sx={{
+                      flexGrow: 1,
+                      fontFamily: '"Housttely Signature", cursive',
+                      fontSize: "1rem",
+                    }}
+                  >
+                    Login
+                  </Typography>
+                </Button>
+              </CoolMode>
             </Grid>
             <Grid item xs={6}>
               <Button

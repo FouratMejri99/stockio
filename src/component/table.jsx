@@ -14,42 +14,21 @@ import { useNotificationContext } from "../context/notification";
 
 export default function BasicTable() {
   const [rows, setRows] = useState([]);
-  const [allRows, setAllRows] = useState([]); // Store all data for search filtering
+  const [allRows, setAllRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const { addNotification } = useNotificationContext();
-  const symbols = ["AAPL", "GOOGL", "MSFT", "AMZN"];
-  const API_KEY = "7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl"; // Keep this secure!
-  const date = "2025-02-05"; // Static for now, make it dynamic if needed
 
-  // Fetch stock data from Polygon.io
+  // Fetch stock data from your Flask backend
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const responses = await Promise.allSettled(
-          symbols.map(async (symbol) => {
-            const url = `https://api.polygon.io/v1/open-close/${symbol}/${date}?adjusted=true&apiKey=${API_KEY}`;
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`Error fetching ${symbol}`);
-            return res.json();
-          })
-        );
-
-        const formattedRows = responses
-          .filter(
-            (res) => res.status === "fulfilled" && res.value?.status === "OK"
-          )
-          .map((res, index) => ({
-            name: symbols[index], // Correct key name
-            currentPrice: res.value.close || "N/A",
-            openPrice: res.value.open || "N/A",
-            highPrice: res.value.high || "N/A",
-            lowPrice: res.value.low || "N/A",
-          }));
-
-        setRows(formattedRows);
-        setAllRows(formattedRows);
+        const res = await fetch("http://localhost:5000/scrape-stock-data");
+        if (!res.ok) throw new Error("Error fetching stock data");
+        const data = await res.json();
+        setRows(data);
+        setAllRows(data);
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
@@ -72,7 +51,7 @@ export default function BasicTable() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Properly formatted header
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           email: userEmail,
@@ -82,7 +61,7 @@ export default function BasicTable() {
 
       const data = await response.json();
       if (response.ok) {
-        addNotification("Stock Added !");
+        addNotification("Stock Added!");
       } else {
         alert(`Error: ${data.message}`);
       }
