@@ -24,7 +24,7 @@ function LoginCard() {
 
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
-  const API_URL = process.env.VERCEL_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
   console.log("API URL:", API_URL);
 
   // Handle form submission
@@ -39,7 +39,7 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post(API_URL, {
+      const response = await axios.post(`${API_URL}/login`, {
         email,
         password,
       });

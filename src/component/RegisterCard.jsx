@@ -38,7 +38,7 @@ function RegisterCard() {
     }
 
     try {
-      const response = await axios.post("${API_URL}/register", {
+      const response = await axios.post(`${API_URL}/register`, {
         email,
         username,
         password,
