@@ -11,13 +11,13 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.MONGO_URI,
+    origin: process.env.MONGODB_URI,
     credentials: true,
   })
 );
 
 // MongoDB Connection (Using Environment Variables)
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGODB_URI;
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -150,7 +150,3 @@ app.post("/login", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("🚀 API is running!");
 });
-
-// Define Port for Vercel
-const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
