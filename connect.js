@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.MONGODB_URI,
+    origin: process.env.REACT_APP_API_URL,
     credentials: true,
   })
 );
@@ -150,3 +150,6 @@ app.post("/login", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("🚀 API is running!");
 });
+
+// Export for Vercel
+module.exports = app;

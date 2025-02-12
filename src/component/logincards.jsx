@@ -39,10 +39,13 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `https://stockio-nine.vercel.app/api/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.token) {
         // Save token in localStorage
