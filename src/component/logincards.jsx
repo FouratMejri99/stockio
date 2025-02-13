@@ -9,56 +9,48 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios"; // Add axios import for making API requests
+import axios from "axios";
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import CoolMode from "../component/magicui/coolmode";
 import { useNotificationContext } from "../context/notification";
 
 function LoginCard() {
-  // State for form inputs
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
-
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
-  const API_URL = process.env.REACT_APP_API_URL;
-  console.log("API URL:", API_URL);
+  const [errorMessage, setErrorMessage] = useState(""); // For storing error messages
+  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // Handle form submission
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      setErrorMessage("Please fill in all fields.");
       return;
     }
     if (!agreeToRules) {
-      alert("You must agree to the website rules.");
+      setErrorMessage("You must agree to the website rules.");
       return;
     }
 
     try {
-      const response = await axios.post(
-        `https://stockio-nine.vercel.app/api/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API}/login`, {
+        email,
+        password,
+      });
 
       if (response.data.token) {
-        // Save token in localStorage
         localStorage.setItem("token", response.data.token);
-
         navigate("/stocklist");
         addNotification("Account logged in!");
+        setErrorMessage(""); // Reset error message on successful login
       } else {
-        alert("Login failed. No token received.");
+        setErrorMessage("Login failed. No token received.");
       }
     } catch (error) {
       console.error(error);
-      alert("Login failed. Please check your credentials.");
+      setErrorMessage(`Login failed: ${error.message}`);
     }
   };
 
@@ -90,7 +82,7 @@ function LoginCard() {
           Login
         </Typography>
         <Box component="form" noValidate autoComplete="off">
-          {/* Username Field */}
+          {/* Email Field */}
           <TextField
             fullWidth
             label="Email"
@@ -120,6 +112,12 @@ function LoginCard() {
             }
             label="I agree to the website rules"
           />
+          {/* Display Error Message */}
+          {errorMessage && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              {errorMessage}
+            </Typography>
+          )}
           {/* Buttons */}
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={6}>

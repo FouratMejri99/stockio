@@ -8,19 +8,23 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 // Middleware
+
+const corsOptions = {
+  origin: "http://localhost:5001", // Allow your frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
+
 app.use(express.json());
-app.use(
-  cors({
-    origin: process.env.REACT_APP_API_URL,
-    credentials: true,
-  })
-);
 
 // MongoDB Connection (Using Environment Variables)
 const MONGO_URI = process.env.MONGODB_URI;
 
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI) // ✅ No need for deprecated options
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log("❌ MongoDB connection error:", err));
 
@@ -122,12 +126,12 @@ app.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid password" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
@@ -137,6 +141,7 @@ app.post("/login", async (req, res) => {
     );
 
     res.json({
+      success: true,
       message: "Login successful!",
       token,
       user: { email: user.email, username: user.username, stocks: user.stocks },
@@ -147,9 +152,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Handle Root Route
-app.get("/", (req, res) => {
-  res.send("🚀 API is running!");
-});
 
-// Export for Vercel
-module.exports = app;
+// Define Port for Vercel
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("🚀 Server running on port", PORT));
