@@ -20,8 +20,8 @@ function RegisterCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const navigate = useNavigate();
-  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
+  const API = process.env.REACT_APP_API_URL;
+  axios.defaults.withCredentials = true;
   console.log("API URL:", API);
 
   const handleRegister = async () => {
