@@ -35,10 +35,13 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post(`${API}/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `https://stockio-topaz.vercel.app/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);

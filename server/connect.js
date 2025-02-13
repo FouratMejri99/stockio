@@ -12,6 +12,7 @@ const app = express();
 const corsOptions = {
   origin: "https://stockio-topaz.vercel.app", // Allow your frontend origin
   methods: ["GET", "POST", "PUT", "DELETE"],
+  Credential: true,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 

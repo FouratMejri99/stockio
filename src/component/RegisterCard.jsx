@@ -39,12 +39,15 @@ function RegisterCard() {
     }
 
     try {
-      const response = await axios.post(`${API}/register`, {
-        email,
-        username,
-        password,
-        confirmPassword,
-      });
+      const response = await axios.post(
+        `https://stockio-topaz.vercel.app/register`,
+        {
+          email,
+          username,
+          password,
+          confirmPassword,
+        }
+      );
       alert(response.data.message);
       navigate("/login");
     } catch (error) {
