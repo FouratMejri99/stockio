@@ -10,7 +10,7 @@ const app = express();
 // Middleware
 
 const corsOptions = {
-  origin: "http://localhost:5001", // Allow your frontend origin
+  origin: "https://stockio-topaz.vercel.app", // Allow your frontend origin
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
