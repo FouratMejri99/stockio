@@ -153,7 +153,9 @@ app.post("/login", async (req, res) => {
 });
 
 // Handle Root Route
-
+app.get("/", (req, res) => {
+  res.send("<h1>Hello, the server is working!</h1>");
+});
 // Define Port for Vercel
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("🚀 Server running on port", PORT));
