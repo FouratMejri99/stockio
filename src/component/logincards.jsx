@@ -23,7 +23,7 @@ function LoginCard() {
   const { addNotification } = useNotificationContext();
   const [errorMessage, setErrorMessage] = useState(""); // For storing error messages
   const API = process.env.REACT_APP_API_URL || "https://server-pbhy.vercel.app";
-
+  axios.defaults.withCredentials = true;
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage("Please fill in all fields.");
