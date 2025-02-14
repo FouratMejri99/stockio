@@ -22,7 +22,7 @@ function LoginCard() {
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
   const [errorMessage, setErrorMessage] = useState(""); // For storing error messages
-  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API = process.env.REACT_APP_API_URL || "https://server-pbhy.vercel.app";
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -36,7 +36,7 @@ function LoginCard() {
 
     try {
       const response = await axios.post(
-        `https://stockio-topaz.vercel.app/login`,
+        `https://server-pbhy.vercel.app/login`,
         {
           email,
           password,

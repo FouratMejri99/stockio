@@ -1,120 +1,88 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts"; // Import ReactApexChart
+import ReactApexChart from "react-apexcharts";
 
 export default function GridDemo() {
-  const [stockData, setStockData] = useState([]);
-  const [dataset, setDataset] = useState([]);
+  const [historicalData, setHistoricalData] = useState([]);
+  const [dates, setDates] = useState([]);
+  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // Function to load stocks from localStorage
-  const loadStocksFromLocalStorage = () => {
-    const storedStocks = JSON.parse(localStorage.getItem("stocks")) || [];
-    setStockData(storedStocks);
-  };
+  const fetchStockData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/get-historical-data/AAPL'}`
+      );
 
-  // Function to transform stock data into a format suitable for ApexChart
-  const transformStockData = () => {
-    return stockData.map((stock, index) => ({
-      name: stock.name,
-      data: stock.currentPrice,
-    }));
-  };
+      console.log("API Response:", response.data);
 
-  useEffect(() => {
-    loadStocksFromLocalStorage();
-  }, []); // Only runs once on mount
+      if (response.data && Array.isArray(response.data)) {
+        const prices = response.data.map((entry) => entry.close || 0);
+        const labels = response.data.map((entry) => entry.date || "N/A");
 
-  useEffect(() => {
-    if (stockData.length > 0) {
-      const initialDataset = transformStockData();
-      setDataset(initialDataset); // Set initial dataset
+        setHistoricalData(prices);
+        setDates(labels);
+      } else {
+        console.error("Invalid data structure from API");
+        setHistoricalData([]);
+        setDates([]);
+      }
+    } catch (error) {
+      console.error("Error fetching historical data:", error);
+      setHistoricalData([]);
+      setDates([]);
     }
-  }, [stockData]); // Triggered whenever stockData changes
+  };
 
-  // Simulate moving curve by updating the dataset every 1 second
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDataset((prevDataset) => {
-        // Example: Add a new data point to simulate the curve movement
-        const newDataset = prevDataset.map((dataPoint) => ({
-          ...dataPoint,
-          data: dataPoint.data + (Math.random() - 0.5) * 5, // Simulate fluctuation of stock price
-        }));
-
-        return newDataset;
-      });
-    }, 1000); // Update every 1 second
-
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
-  }, []); // Only run once to simulate the curve movement
+    fetchStockData("AAPL"); // Fetch Apple stock prices
+  }, []);
 
   const state = {
-    series: [
-      {
-        name: "Website Blog",
-        type: "column",
-        data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
-      },
-      {
-        name: "Social Media",
-        type: "line",
-        data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16],
-      },
-    ],
+    series: historicalData.length
+      ? [{ name: "Stock Price", type: "line", data: historicalData }]
+      : [{ name: "Stock Price", type: "line", data: [0] }],
+
     options: {
       chart: {
         height: 350,
         type: "line",
       },
       stroke: {
-        width: [0, 4],
+        width: [4],
       },
       title: {
-        text: "Traffic Sources",
+        text: "",
       },
       dataLabels: {
         enabled: true,
-        enabledOnSeries: [1],
       },
-      labels: [
-        "01 Jan 2001",
-        "02 Jan 2001",
-        "03 Jan 2001",
-        "04 Jan 2001",
-        "05 Jan 2001",
-        "06 Jan 2001",
-        "07 Jan 2001",
-        "08 Jan 2001",
-        "09 Jan 2001",
-        "10 Jan 2001",
-        "11 Jan 2001",
-        "12 Jan 2001",
-      ],
-      yaxis: [
-        {
-          title: {
-            text: "Website Blog",
-          },
+      xaxis: {
+        categories: dates.length ? dates : ["No Data"],
+        title: {
+          text: "Date",
         },
-        {
-          opposite: true,
-          title: {
-            text: "Social Media",
-          },
+      },
+      yaxis: {
+        title: {
+          text: "Price (USD)",
         },
-      ],
+      },
     },
   };
 
   return (
     <div>
       <div id="chart">
-        <ReactApexChart
-          options={state.options}
-          series={state.series}
-          type="line"
-          height={350}
-        />
+        {historicalData.length > 0 ? (
+          <ReactApexChart
+            options={state.options}
+            series={state.series}
+            type="line"
+            height={350}
+          />
+        ) : (
+          <p>Loading or no data available...</p>
+        )}
       </div>
     </div>
   );

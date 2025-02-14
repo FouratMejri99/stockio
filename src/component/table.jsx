@@ -19,23 +19,33 @@ export default function BasicTable() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [search, setSearch] = useState("");
   const { addNotification } = useNotificationContext();
-
-  // Fetch stock data from your Flask backend
+  const API = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  // Fetch stock data from your backend endpoint
   useEffect(() => {
     const fetchStockData = async () => {
       try {
-        const res = await fetch("http://localhost:5000/scrape-stock-data");
+        const res = await fetch("http://localhost:5000/get-stock-data/AAPL"); // Replace with dynamic symbol if needed
         if (!res.ok) throw new Error("Error fetching stock data");
         const data = await res.json();
-        setRows(data);
-        setAllRows(data);
+
+        // Transforming the data for the table
+        const transformedData = data.map((stockData) => ({
+          name: "AAPL", // Replace with dynamic stock name
+          currentPrice: stockData.Close,
+          openPrice: stockData.Open,
+          highPrice: stockData.High,
+          lowPrice: stockData.Low,
+        }));
+
+        setRows(transformedData);
+        setAllRows(transformedData);
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
     };
 
     fetchStockData();
-  }, []);
+  }, []); // Adjust this dependency if you want to fetch for different symbols
 
   const handleAddStock = async (stock) => {
     const userEmail = "test@example.com"; // Replace with logged-in user's email

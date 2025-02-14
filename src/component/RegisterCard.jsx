@@ -20,9 +20,7 @@ function RegisterCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const navigate = useNavigate();
-  const API = process.env.REACT_APP_API_URL;
-  axios.defaults.withCredentials = true;
-  console.log("API URL:", API);
+  const API = "https://server-pbhy.vercel.app/";
 
   const handleRegister = async () => {
     if (!email || !username || !password || !confirmPassword) {
@@ -40,7 +38,7 @@ function RegisterCard() {
 
     try {
       const response = await axios.post(
-        `https://stockio-topaz.vercel.app/register`,
+        `https://server-pbhy.vercel.app/register`,
         {
           email,
           username,

@@ -1,10 +1,7 @@
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
-import axios from "axios";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-const API_KEY = "7GdKFlTbXDfZNUGIgDopgJ3pUT6xjQkl";
-
+// Sizing configuration
 const sizing = {
   margin: { right: 5 },
   width: 600,
@@ -13,38 +10,43 @@ const sizing = {
 };
 
 export default function Dashboard() {
-  const [selectedRange, setSelectedRange] = useState([
-    dayjs("2023-01-09"),
-    dayjs("2023-02-10"),
-  ]); // Default range
-  const [data, setData] = useState([]);
+  const [sectorData, setSectorData] = useState([]);
+
+  // Random data generation function
+  const generateRandomData = () => {
+    const sectors = [
+      "Technology",
+      "Healthcare",
+      "Finance",
+      "Consumer Goods",
+      "Energy",
+    ];
+    const colors = ["#0000FF", "#FF0000", "green", "orange"]; // Blue, White, Red, Black
+
+    const randomData = sectors.map((sector, index) => ({
+      name: sector,
+      percentage: Math.floor(Math.random() * 30) + 10, // Random percentage between 10 and 40
+      color: colors[index % colors.length], // Assign color based on the sector index
+    }));
+
+    // Normalize the data so the percentages sum up to 100
+    const total = randomData.reduce((sum, item) => sum + item.percentage, 0);
+    const normalizedData = randomData.map((item) => ({
+      ...item,
+      percentage: (item.percentage / total) * 100,
+    }));
+
+    setSectorData(normalizedData);
+  };
 
   useEffect(() => {
-    if (!selectedRange[0] || !selectedRange[1]) return;
+    // Generate random data when the component mounts
+    generateRandomData();
+  }, []); // Empty dependency array to run only once on mount
 
-    const formattedStartDate = selectedRange[0].format("YYYY-MM-DD");
-    const formattedEndDate = selectedRange[1].format("YYYY-MM-DD");
-    const API_URL = `https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/${formattedStartDate}/${formattedEndDate}?adjusted=true&sort=asc&apiKey=${API_KEY}`;
+  const TOTAL = sectorData.reduce((sum, item) => sum + item.percentage, 0); // Calculate total percentage
 
-    axios
-      .get(API_URL)
-      .then((response) => {
-        const results = response.data.results;
-        if (results) {
-          const formattedData = results.map((item, index) => ({
-            label: `Volume ${index + 1}`,
-            value: item.v,
-            color: "#0088FE",
-          }));
-
-          setData(formattedData);
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, [selectedRange]);
-
-  const TOTAL = data.reduce((sum, item) => sum + item.value, 0);
-
+  // Arc label to display percentage
   const getArcLabel = (params) => {
     const percent = (params.value / TOTAL) * 100;
     return `${percent.toFixed(0)}%`;
@@ -52,27 +54,31 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-      {/* Date Range Picker */}
-
-      {/* Pie Chart */}
-      <PieChart
-        series={[
-          {
-            outerRadius: 80,
-            data,
-            arcLabel: getArcLabel,
-          },
-        ]}
-        sx={{
-          [`& .${pieArcLabelClasses.root}`]: {
-            fill: "white",
-            fontSize: 15,
-            display: "flex",
-            justifyContent: "center",
-          },
-        }}
-        {...sizing}
-      />
+      {/* Pie Chart for Random Sector Allocation */}
+      {sectorData.length > 0 && (
+        <PieChart
+          series={[
+            {
+              outerRadius: 80,
+              data: sectorData.map((sector) => ({
+                label: sector.name,
+                value: sector.percentage,
+                color: sector.color,
+              })),
+              arcLabel: getArcLabel,
+            },
+          ]}
+          sx={{
+            [`& .${pieArcLabelClasses.root}`]: {
+              fill: "white",
+              fontSize: 15,
+              display: "flex",
+              justifyContent: "center",
+            },
+          }}
+          {...sizing}
+        />
+      )}
     </div>
   );
 }

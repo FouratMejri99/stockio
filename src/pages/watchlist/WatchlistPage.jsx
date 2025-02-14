@@ -58,11 +58,9 @@ export default function WatchlistPage(props) {
         <Grid container spacing={4}>
           {/* Stock List */}
           <Grid item xs={12} sm={8} md={8}>
-            <Card elevation={3} sx={{ height: "100%" }}>
-              <CardContent>
-                <StockList />
-              </CardContent>
-            </Card>
+            <CardContent>
+              <StockList />
+            </CardContent>
           </Grid>
 
           {/* Date Calendar */}
@@ -92,7 +90,7 @@ export default function WatchlistPage(props) {
                     fontSize: "1rem",
                   }}
                 >
-                  Stocks History Chart
+                  Stocks History Chart For the last 5 Days
                 </Typography>
                 <GridDemo sx={{ width: "100%", height: "400px" }} />
               </CardContent>
