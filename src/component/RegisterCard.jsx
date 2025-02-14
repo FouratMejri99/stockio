@@ -20,8 +20,7 @@ function RegisterCard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToRules, setAgreeToRules] = useState(false);
   const navigate = useNavigate();
-  const API =
-    process.env.REACT_APP_API_URL || "https://server-pbhy.vercel.app/";
+  const API = process.env.REACT_APP_API_URL;
 
   axios.defaults.withCredentials = true;
 
@@ -40,15 +39,12 @@ function RegisterCard() {
     }
 
     try {
-      const response = await axios.post(
-        "https://server-pbhy.vercel.app/register",
-        {
-          email,
-          username,
-          password,
-          confirmPassword,
-        }
-      );
+      const response = await axios.post(`${API}/register`, {
+        email,
+        username,
+        password,
+        confirmPassword,
+      });
       alert(response.data.message);
       navigate("/login");
     } catch (error) {

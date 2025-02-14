@@ -22,7 +22,7 @@ function LoginCard() {
   const [agreeToRules, setAgreeToRules] = useState(false);
   const { addNotification } = useNotificationContext();
   const [errorMessage, setErrorMessage] = useState(""); // For storing error messages
-  const API = process.env.REACT_APP_API_URL || "https://server-pbhy.vercel.app";
+  const API = process.env.REACT_APP_API_URL;
   axios.defaults.withCredentials = true;
   const handleLogin = async () => {
     if (!email || !password) {
@@ -35,13 +35,10 @@ function LoginCard() {
     }
 
     try {
-      const response = await axios.post(
-        `https://server-pbhy.vercel.app/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API}/login`, {
+        email,
+        password,
+      });
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
